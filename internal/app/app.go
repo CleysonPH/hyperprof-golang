@@ -19,16 +19,13 @@ func Run() {
 		if err := godotenv.Load(); err != nil {
 			log.Fatal().Err(err).Msg("Error loading .env file")
 		}
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
 
 	config.Init()
 
 	database.InitMySQL(config.Dsn)
 	defer database.Close()
-
-	if config.Env == "dev" {
-		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	}
 
 	listener, err := net.Listen("tcp", config.Addr())
 	if err != nil {
